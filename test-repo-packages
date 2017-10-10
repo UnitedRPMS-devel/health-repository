@@ -1,5 +1,5 @@
 #!/bin/bash
-
+dnf clean all && dnf -y update
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}'  > ver-package-from-urpms
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' | tr '\n' ' ' > package-from-urpms
 dnf -y install $(cat package-from-urpms) 
@@ -15,7 +15,11 @@ else
 fi
 done <"$file"
 if [ $(grep -c "CONFLICT" HEALT-UNITEDRPMS) -gt 0 ]; then
+cat HEALT-UNITEDRPMS
+echo 'PACKAGES WITHOUT PROBLEM'
 exit 0
 else
+cat HEALT-UNITEDRPMS
+echo 'CONFLICTED PACKAGES FOUND'
 exit 1
 fi
