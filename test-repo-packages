@@ -1,0 +1,21 @@
+#!/bin/bash
+
+dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}'  > ver-package-from-urpms
+dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' | tr '\n' ' ' > package-from-urpms
+dnf -y install $(cat package-from-urpms) 
+dnf -y repo-pkgs unitedrpms list installed | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' > package-installed-urpms
+file=ver-package-from-urpms
+while IFS= read -r line; do
+        # display $line or do something with $line
+if [ $(grep -c $line package-installed-urpms) -gt 0 ]; then
+    echo "$line  -  WORKING" >>  HEALT-UNITEDRPMS
+else
+    echo "$line not installed, you need check the log"
+    echo "$line -  CONFLICT" >>  HEALT-UNITEDRPMS
+fi
+done <"$file"
+if [ $(grep -c "CONFLICT" HEALT-UNITEDRPMS) -gt 0 ]; then
+exit 0
+else
+exit 1
+fi
