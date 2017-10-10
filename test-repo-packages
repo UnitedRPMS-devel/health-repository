@@ -17,9 +17,9 @@ done <"$file"
 if [ $(grep -c "CONFLICT" HEALT-UNITEDRPMS) -gt 0 ]; then
 cat HEALT-UNITEDRPMS
 echo 'CONFLICTED PACKAGES FOUND'
-exit 0
+exit 1
 else
 cat HEALT-UNITEDRPMS
 echo 'ALL PACKAGES WORKING FINE'
-exit 1
+exit 0
 fi
