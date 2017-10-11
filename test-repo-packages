@@ -2,7 +2,7 @@
 dnf clean all && dnf -y update
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}'  > ver-package-from-urpms
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' | tr '\n' ' ' > package-from-urpms
-dnf -y install --skip-broken $(cat package-from-urpms) 
+dnf -y install $(cat package-from-urpms) 
 dnf -y repo-pkgs unitedrpms list installed | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' > package-installed-urpms
 file=ver-package-from-urpms
 while IFS= read -r line; do
