@@ -1,16 +1,18 @@
 #!/bin/bash
+mkdir -p $PWD/downloaded-packages
+rm -f HEALT-UNITEDRPMS
 dnf clean all && dnf -y update
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}'  > ver-package-from-urpms
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' | tr '\n' ' ' > package-from-urpms
-dnf -y install --downloadonly --skip-broken $(cat package-from-urpms) 
+dnf -y install --downloadonly --downloaddir=$PWD/downloaded-packages/ --skip-broken $(cat package-from-urpms) 
 dnf -y repo-pkgs unitedrpms list installed | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' > package-installed-urpms
 file=ver-package-from-urpms
+ls $PWD/downloaded-packages > dwlist
 while IFS= read -r line; do
         # display $line or do something with $line
-if [ $(grep -c $line package-installed-urpms) -gt 0 ]; then
+if [ $(grep -c $line dwlist) -gt 0 ]; then
     echo "$line  -  WORKING" >>  HEALT-UNITEDRPMS
 else
-    echo "$line not installed, you need check the log"
     echo "$line -  CONFLICT" >>  HEALT-UNITEDRPMS
 fi
 done <"$file"
