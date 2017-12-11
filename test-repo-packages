@@ -1,5 +1,5 @@
 #!/bin/bash
-mkdir -p $PWD/downloaded-packages
+cd / && mkdir -p $PWD/downloaded-packages 
 rm -f HEALT-UNITEDRPMS
 dnf clean all && dnf -y update
 dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}'  > ver-package-from-urpms
