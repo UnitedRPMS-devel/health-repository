@@ -2,14 +2,11 @@
 cd / && mkdir -p $PWD/downloaded-packages 
 rm -f HEALT-UNITEDRPMS
 dnf clean all && dnf -y update
-dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | grep -v -e Fedora -e debuginfo | awk '{print $1}'  > ver-package-from-urpms
-dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | grep -v -e Fedora -e debuginfo | awk '{print $1}' | tr '\n' ' ' > package-from-urpms
-
-dnf -y repository-packages unitedrpms --downloadonly --downloaddir=$PWD/downloaded-packages/ --skip-broken install $(cat ver-package-from-urpms)
+dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}'  > ver-package-from-urpms
+dnf -y repo-pkgs unitedrpms list all | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' | tr '\n' ' ' > package-from-urpms
 #dnf -y install --downloadonly --downloaddir=$PWD/downloaded-packages/ --skip-broken $(cat package-from-urpms) 
-#dnf -y install --downloadonly --downloaddir=$PWD/downloaded-packages/ 
-#dnf -y repo-pkgs unitedrpms list installed | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' > package-installed-urpms
-
+dnf -y install --downloadonly --downloaddir=$PWD/downloaded-packages/ 
+dnf -y repo-pkgs unitedrpms list installed | grep -e '.x86_64' -e '.noarch' -e '.i686' | awk '{print $1}' > package-installed-urpms
 file=ver-package-from-urpms
 ls $PWD/downloaded-packages > dwlist
 while IFS= read -r line; do
@@ -20,7 +17,6 @@ else
     echo "$line -  CONFLICT" >>  HEALT-UNITEDRPMS
 fi
 done <"$file"
-
 if [ $(grep -c "CONFLICT" HEALT-UNITEDRPMS) -gt 0 ]; then
 cat HEALT-UNITEDRPMS
 echo 'CONFLICTED PACKAGES FOUND'
